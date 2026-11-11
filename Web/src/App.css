@@ -1436,7 +1436,8 @@
   font-size: 0.82rem;
 }
 
-.admin-toolbar select {
+.admin-toolbar select,
+.admin-toolbar input {
   padding: 8px 10px;
   border: 1px solid rgba(148, 163, 184, 0.25);
   border-radius: 10px;
@@ -2803,7 +2804,8 @@
 .action-form input,
 .action-form select,
 .action-form textarea,
-.admin-toolbar select {
+.admin-toolbar select,
+.admin-toolbar input {
   border-color: #cbd5e1;
   background: #fff;
   color: #172033;
@@ -3153,7 +3155,8 @@
 .app-shell[data-theme='dark'] .action-form input,
 .app-shell[data-theme='dark'] .action-form select,
 .app-shell[data-theme='dark'] .action-form textarea,
-.app-shell[data-theme='dark'] .admin-toolbar select {
+.app-shell[data-theme='dark'] .admin-toolbar select,
+.app-shell[data-theme='dark'] .admin-toolbar input {
   border-color: rgba(148, 163, 184, 0.25);
   background: rgba(2, 6, 23, 0.72);
   color: #f8fafc;
@@ -3278,4 +3281,32 @@
 .country-detail-banner p,
 .app-shell[data-theme='dark'] .country-detail-banner p {
   color: #f8fafc;
+}
+
+.admin-delete-form {
+  margin-top: 12px;
+}
+
+.admin-delete-form input {
+  min-width: 240px;
+}
+
+.danger-button {
+  border-color: rgba(248, 113, 113, 0.45);
+  background: rgba(185, 28, 28, 0.22);
+  color: #fecaca;
+}
+
+.danger-button:hover:not(:disabled) {
+  background: rgba(185, 28, 28, 0.38);
+}
+
+.app-shell:not([data-theme='dark']) .danger-button {
+  color: #b91c1c;
+  background: #fef2f2;
+}
+
+.danger-button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
 }
