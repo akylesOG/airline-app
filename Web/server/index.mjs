@@ -487,6 +487,17 @@ async function handleRequest(request, response) {
     return sendJson(response, 200, history)
   }
 
+  if (route === 'DELETE /api/admin/bookings') {
+    requireAdmin(request)
+    const email = validEmail(url.searchParams.get('email'))
+    const remaining = store.bookings.filter((booking) => booking.email !== email)
+    const deleted = store.bookings.length - remaining.length
+    if (deleted === 0) throw new HttpError(404, `No bookings found for ${email}.`)
+    store.bookings = remaining
+    await persistStore()
+    return sendJson(response, 200, { email, deleted })
+  }
+
   if (route === 'GET /api/offers') {
     return sendJson(response, 200, offers)
   }

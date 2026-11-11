@@ -306,6 +306,8 @@ function App() {
   const [adminCode, setAdminCode] = useState('')
   const [adminToken, setAdminToken] = useState('')
   const [adminFilter, setAdminFilter] = useState<'All' | AdminFlight['status']>('All')
+  const [deleteEmail, setDeleteEmail] = useState('')
+  const [deleteMessage, setDeleteMessage] = useState('')
   const [theme, setTheme] = useState<ThemeMode>(() =>
     window.localStorage.getItem('skyjet-theme') === 'dark' ? 'dark' : 'light',
   )
@@ -442,6 +444,30 @@ function App() {
     } catch (error) {
       setAdminError(error instanceof Error ? error.message : 'Could not load flight history.')
     } finally {
+      setAdminLoading(false)
+    }
+  }
+
+  const handleDeleteBookingsByEmail = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    const email = deleteEmail.trim().toLowerCase()
+    if (!email || !adminToken) return
+    const matches = adminBookings.filter((booking) => booking.email === email).length
+    if (!window.confirm(`Delete ${matches || 'all'} booking(s) for ${email}? This cannot be undone.`)) return
+    setAdminLoading(true)
+    setAdminError('')
+    setDeleteMessage('')
+    try {
+      const { deleted } = await apiRequest<{ deleted: number }>(
+        `/api/admin/bookings?email=${encodeURIComponent(email)}`,
+        { method: 'DELETE', headers: { Authorization: `Bearer ${adminToken}` } },
+      )
+      setDeleteEmail('')
+      setDeleteMessage(`Deleted ${deleted} booking(s) for ${email}.`)
+      setFlights(await apiRequest<Flight[]>('/api/flights'))
+      await loadAdminHistory(adminToken)
+    } catch (error) {
+      setAdminError(error instanceof Error ? error.message : 'Could not delete bookings.')
       setAdminLoading(false)
     }
   }
@@ -1361,6 +1387,22 @@ function App() {
                     <h3>Booking history</h3>
                     <span>{adminBookings.length} bookings</span>
                   </div>
+                  <form className="admin-toolbar admin-delete-form" onSubmit={handleDeleteBookingsByEmail}>
+                    <label>
+                      Delete by email
+                      <input
+                        type="email"
+                        required
+                        placeholder="name@gmail.com"
+                        value={deleteEmail}
+                        onChange={(event) => setDeleteEmail(event.target.value)}
+                      />
+                    </label>
+                    <button type="submit" className="secondary-button danger-button" disabled={adminLoading || !deleteEmail.trim()}>
+                      Delete bookings
+                    </button>
+                  </form>
+                  {deleteMessage && <p className="form-message success" role="status">{deleteMessage}</p>}
                   {adminBookings.length ? (
                     <div className="admin-table-wrap">
                       <table className="admin-table">
