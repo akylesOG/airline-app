@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: emikettik-demo
+    runtime: node
+    plan: free
+    rootDir: Web
+    buildCommand: npm ci && npm run build
+    startCommand: npm run start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: ADMIN_CODE
+        sync: false
